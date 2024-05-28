@@ -21,13 +21,13 @@
     <parent>
         <groupId>com.github.hazendaz</groupId>
         <artifactId>base-parent</artifactId>
-        <version>45</version>
+        <version>46</version>
         <relativePath />
     </parent>
 
     <groupId>com.github.hazendaz.tomcat</groupId>
     <artifactId>tomcat11</artifactId>
-    <version>11.0.0.0.M19-SNAPSHOT</version>
+    <version>11.0.0.0.M20-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>tomcat11</name>
@@ -58,36 +58,41 @@
 
     <properties>
         <!-- JDK Compilation/Runtime Level -->
-        <java.version>11</java.version>
-        <java.release.version>11</java.release.version>
-        <javadoc.java.release.version>11</javadoc.java.release.version>
+        <java.version>17</java.version>
+        <java.release.version>17</java.release.version>
+        <javadoc.java.release.version>17</javadoc.java.release.version>
 
         <!-- Project Final Name -->
         <project.environment>apache-tomcat</project.environment>
 
         <!-- Standard Dependencies -->
-        <commons-daemon.version>1.3.4</commons-daemon.version>
-        <ecj.version>3.33.0</ecj.version>
-        <logback.version>1.2.13</logback.version>
-        <tomcat.version>11.0.0.M19</tomcat.version>
-        <tomcat-slf4j-logback.version>11.0.0.M19</tomcat-slf4j-logback.version>
+        <commons-daemon.version>1.4.0</commons-daemon.version>
+        <ecj.version>3.37.0</ecj.version>
+        <logback.version>1.4.14</logback.version>
+        <tomcat.version>11.0.0-M20</tomcat.version>
+        <tomcat-slf4j-logback.version>11.0.0-M20</tomcat-slf4j-logback.version>
 
         <!-- Psi Probe Tomcat Manager -->
-        <psi-probe.version>4.2.0</psi-probe.version>
+        <psi-probe.version>5.0.0</psi-probe.version>
 
         <!-- Java EE Api Versions -->
-        <activation.version>1.2.2</activation.version>
-        <annotation.version>1.3.5</annotation.version>
-        <ejb.version>3.2.6</ejb.version>
-        <el-api.version>3.0.3</el-api.version>
-        <el-impl.version>3.0.4</el-impl.version>
-        <interceptor.version>1.2.5</interceptor.version>
-        <jms.version>2.0.3</jms.version>
-        <mail.version>1.6.7</mail.version>
-        <persistence.version>2.2.3</persistence.version>
-        <resource.version>1.7.4</resource.version>
-        <transaction.version>1.3.3</transaction.version>
-        <websocket.version>1.1.2</websocket.version>
+        <angus-activation.version>2.0.2</angus-activation.version>
+        <angus-mail.version>2.0.3</angus-mail.version>
+        <activation.version>2.1.3</activation.version>
+        <annotation.version>2.1.1</annotation.version>
+        <ejb.version>4.0.1</ejb.version>
+        <el-api.version>5.0.1</el-api.version>
+        <expressly.version>5.0.0</expressly.version>
+        <interceptor.version>2.2.0</interceptor.version>
+        <jms.version>3.1.0</jms.version>
+        <migration.version>1.0.8</migration.version>
+        <persistence.version>3.1.0</persistence.version>
+        <resource.version>2.1.0</resource.version>
+        <transaction.version>2.0.1</transaction.version>
+        <websocket.version>2.2.0</websocket.version>
+
+        <!-- Metro (include in tomcat for java 8 or lower -->
+        <metro.version>4.0.3</metro.version>
 
         <!-- Automatic Module Name -->
         <module.name>com.github.hazendaz.tomcat</module.name>
@@ -112,24 +117,26 @@
             <type>tar.gz</type>
             <classifier>native-src</classifier>
         </dependency>
+        <!-- TODO: Need to drop back to java 17 as rest of EE did before this will work!
         <dependency>
             <groupId>com.github.tomcat-slf4j-logback</groupId>
             <artifactId>tomcat11-slf4j-logback</artifactId>
             <version>${tomcat-slf4j-logback.version}</version>
             <scope>compile</scope>
         </dependency>
+        -->
 
-        <!-- Java EE8 API Stack -->
+        <!-- Java EE10 API Stack -->
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
-            <version>${activation.version}</version>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>${angus-activation.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>${mail.version}</version>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -181,16 +188,29 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.websocket</groupId>
+            <artifactId>jakarta.websocket-client-api</artifactId>
+            <version>${websocket.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>${persistence.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.el</artifactId>
-            <version>${el-impl.version}</version>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+            <version>${expressly.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>jakartaee-migration</artifactId>
+            <version>${migration.version}</version>
+            <scope>compile</scope>
+            <classifier>shaded</classifier>
         </dependency>
 
         <!-- ECJ Libs -->
@@ -212,6 +232,14 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${logback.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Metro -->
+        <dependency>
+            <groupId>org.glassfish.metro</groupId>
+            <artifactId>webservices-rt</artifactId>
+            <version>${metro.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -260,13 +288,37 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
             <version>${tomcat.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-ssi</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-storeconfig</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-tribes</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-websocket</artifactId>
             <version>${tomcat.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -286,6 +338,21 @@
         <finalName>${project.environment}-${project.version}</finalName>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <rules>
+                        <enforceBytecodeVersion>
+                            <excludes>
+                                <!-- Openssl contains panama for jdk 22 or higher if enabled via listener 'org.apache.catalina.core.OpenSSLLifecycleListener' -->
+                                <exclude>org.apache.tomcat:tomcat-coyote</exclude>
+                            </excludes>
+                        </enforceBytecodeVersion>
+                    </rules>
+                </configuration>
+            </plugin>
+
             <!-- Tomcat Configuration -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
