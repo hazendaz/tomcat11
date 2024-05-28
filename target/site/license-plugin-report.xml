@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<licensePluginReport goal="FORMAT" timestamp="1716933671203">
+<licensePluginReport goal="FORMAT" timestamp="1716933945060">
     <module artifactId="tomcat11" groupId="com.github.hazendaz.tomcat" version="11.0.0.0.M19-SNAPSHOT"/>
     <files>
-        <file path=".mvn\extensions.xml" result="REPLACED"/>
-        <file path=".mvn\settings.xml" result="REPLACED"/>
+        <file path=".mvn\extensions.xml" result="ADDED"/>
+        <file path=".mvn\settings.xml" result="ADDED"/>
         <file path="pom.xml" result="REPLACED"/>
         <file path="src\site\site.xml" result="REPLACED"/>
     </files>
