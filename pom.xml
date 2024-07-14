@@ -27,7 +27,7 @@
 
     <groupId>com.github.hazendaz.tomcat</groupId>
     <artifactId>tomcat11</artifactId>
-    <version>11.0.0.0.M20-SNAPSHOT</version>
+    <version>11.0.0.0.M22-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>tomcat11</name>
@@ -70,7 +70,8 @@
         <ecj.version>3.38.0</ecj.version>
         <logback.version>1.4.14</logback.version>
         <tomcat.version>11.0.0-M22</tomcat.version>
-        <tomcat-slf4j-logback.version>11.0.0-M20</tomcat-slf4j-logback.version>
+        <tomcat-config.version>11.0.0-M22</tomcat-config.version>
+        <tomcat-slf4j-logback.version>11.0.0-M22</tomcat-slf4j-logback.version>
 
         <!-- Psi Probe Tomcat Manager -->
         <psi-probe.version>5.0.0</psi-probe.version>
@@ -117,14 +118,12 @@
             <type>tar.gz</type>
             <classifier>native-src</classifier>
         </dependency>
-        <!-- TODO: Need to drop back to java 17 as rest of EE did before this will work!
         <dependency>
             <groupId>com.github.tomcat-slf4j-logback</groupId>
             <artifactId>tomcat11-slf4j-logback</artifactId>
             <version>${tomcat-slf4j-logback.version}</version>
             <scope>compile</scope>
         </dependency>
-        -->
 
         <!-- Java EE10 API Stack -->
         <dependency>
@@ -369,7 +368,7 @@
                                 <artifactItem>
                                     <groupId>com.github.hazendaz.tomcat</groupId>
                                     <artifactId>tomcat11-config</artifactId>
-                                    <version>${tomcat.version}</version>
+                                    <version>${tomcat-config.version}</version>
                                     <type>tar.xz</type>
                                     <classifier>distro</classifier>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
