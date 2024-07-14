@@ -69,13 +69,6 @@
 #                   the version command etc.
 #                   Most options should go into CATALINA_OPTS.
 #
-#   JAVA_ENDORSED_DIRS (Optional) Lists of of colon separated directories
-#                   containing some jars in order to allow replacement of APIs
-#                   created outside of the JCP (i.e. DOM and SAX from W3C).
-#                   It can also be used to update the XML parser implementation.
-#                   This is only supported for Java <= 8.
-#                   Defaults to $CATALINA_HOME/endorsed.
-#
 #   JPDA_TRANSPORT  (Optional) JPDA transport used when the "jpda start"
 #                   command is executed. The default is "dt_socket".
 #
@@ -105,11 +98,6 @@
 #   CATALINA_LOGGING_CONFIG (Optional) Override Tomcat's logging config file
 #                   Example (all one line)
 #                   CATALINA_LOGGING_CONFIG="-Djava.util.logging.config.file=$CATALINA_BASE/conf/logging.properties"
-#
-#   LOGGING_CONFIG  Deprecated
-#                   Use CATALINA_LOGGING_CONFIG
-#                   This is only used if CATALINA_LOGGING_CONFIG is not set
-#                   and LOGGING_CONFIG starts with "-D..."
 #
 #   LOGGING_MANAGER (Optional) Override Tomcat's logging manager
 #                   Example (all one line)
@@ -256,25 +244,12 @@ if $cygwin; then
   CATALINA_BASE=`cygpath --absolute --windows "$CATALINA_BASE"`
   CATALINA_TMPDIR=`cygpath --absolute --windows "$CATALINA_TMPDIR"`
   CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
-  [ -n "$JAVA_ENDORSED_DIRS" ] && JAVA_ENDORSED_DIRS=`cygpath --path --windows "$JAVA_ENDORSED_DIRS"`
 fi
 
 if [ -z "$JSSE_OPTS" ] ; then
   JSSE_OPTS="-Djdk.tls.ephemeralDHKeySize=2048"
 fi
 JAVA_OPTS="$JAVA_OPTS $JSSE_OPTS"
-
-# Register custom URL handlers
-# Do this here so custom URL handles (specifically 'war:...') can be used in the security policy
-JAVA_OPTS="$JAVA_OPTS -Djava.protocol.handler.pkgs=org.apache.catalina.webresources"
-
-# Check for the deprecated LOGGING_CONFIG
-# Only use it if CATALINA_LOGGING_CONFIG is not set and LOGGING_CONFIG starts with "-D..."
-if [ -z "$CATALINA_LOGGING_CONFIG" ]; then
-  case $LOGGING_CONFIG in
-    -D*) CATALINA_LOGGING_CONFIG="$LOGGING_CONFIG"
-  esac
-fi
 
 # Set juli LogManager config file if it is present and an override has not been issued
 if [ -z "$CATALINA_LOGGING_CONFIG" ]; then
@@ -296,18 +271,6 @@ if [ -z "$UMASK" ]; then
 fi
 umask $UMASK
 
-# Java 9 no longer supports the java.endorsed.dirs
-# system property. Only try to use it if
-# JAVA_ENDORSED_DIRS was explicitly set
-# or CATALINA_HOME/endorsed exists.
-ENDORSED_PROP=ignore.endorsed.dirs
-if [ -n "$JAVA_ENDORSED_DIRS" ]; then
-    ENDORSED_PROP=java.endorsed.dirs
-fi
-if [ -d "$CATALINA_HOME/endorsed" ]; then
-    ENDORSED_PROP=java.endorsed.dirs
-fi
-
 # Make the umask available when using the org.apache.catalina.security.SecurityListener
 JAVA_OPTS="$JAVA_OPTS -Dorg.apache.catalina.security.SecurityListener.UMASK=`umask`"
 
@@ -323,13 +286,13 @@ if [ "$USE_NOHUP" = "true" ]; then
     _NOHUP="nohup"
 fi
 
-# Add the JAVA 9 specific start-up parameters required by Tomcat
-JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.lang=ALL-UNNAMED"
-JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.io=ALL-UNNAMED"
-JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.util=ALL-UNNAMED"
-JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.util.concurrent=ALL-UNNAMED"
-JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
-export JDK_JAVA_OPTIONS
+# Add the module start-up parameters required by Tomcat
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.lang=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.io=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.util=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.base/java.util.concurrent=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
+JAVA_OPTS="$JAVA_OPTS --enable-native-access=ALL-UNNAMED"
 
 # ----- Execute The Requested Command -----------------------------------------
 
@@ -373,59 +336,24 @@ if [ "$1" = "debug" ] ; then
     exit 1
   else
     shift
-    if [ "$1" = "-security" ] ; then
-      if [ $have_tty -eq 1 ]; then
-        echo "Using Security Manager"
-      fi
-      shift
-      eval exec "\"$_RUNJDB\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-        -D$ENDORSED_PROP="$JAVA_ENDORSED_DIRS" \
-        -classpath "$CLASSPATH" \
-        -sourcepath "$CATALINA_HOME"/../../java \
-        -Djava.security.manager \
-        -Djava.security.policy=="$CATALINA_BASE"/conf/catalina.policy \
-        -Dcatalina.base="$CATALINA_BASE" \
-        -Dcatalina.home="$CATALINA_HOME" \
-        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
-        org.apache.catalina.startup.Bootstrap "$@" start
-    else
-      eval exec "\"$_RUNJDB\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-        -D$ENDORSED_PROP="$JAVA_ENDORSED_DIRS" \
-        -classpath "$CLASSPATH" \
-        -sourcepath "$CATALINA_HOME"/../../java \
-        -Dcatalina.base="$CATALINA_BASE" \
-        -Dcatalina.home="$CATALINA_HOME" \
-        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
-        org.apache.catalina.startup.Bootstrap "$@" start
-    fi
+    eval exec "\"$_RUNJDB\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
+      -classpath "$CLASSPATH" \
+      -sourcepath "$CATALINA_HOME"/../../java \
+      -Dcatalina.base="$CATALINA_BASE" \
+      -Dcatalina.home="$CATALINA_HOME" \
+      -Djava.io.tmpdir="$CATALINA_TMPDIR" \
+      org.apache.catalina.startup.Bootstrap "$@" start
   fi
 
 elif [ "$1" = "run" ]; then
 
   shift
-  if [ "$1" = "-security" ] ; then
-    if [ $have_tty -eq 1 ]; then
-      echo "Using Security Manager"
-    fi
-    shift
-    eval exec "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-      -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
-      -classpath "\"$CLASSPATH\"" \
-      -Djava.security.manager \
-      -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
-      org.apache.catalina.startup.Bootstrap "$@" start
-  else
-    eval exec "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-      -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
-      -classpath "\"$CLASSPATH\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
-      org.apache.catalina.startup.Bootstrap "$@" start
-  fi
+  eval exec "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
+    -classpath "\"$CLASSPATH\"" \
+    -Dcatalina.base="\"$CATALINA_BASE\"" \
+    -Dcatalina.home="\"$CATALINA_HOME\"" \
+    -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+    org.apache.catalina.startup.Bootstrap "$@" start
 
 elif [ "$1" = "start" ] ; then
 
@@ -484,33 +412,14 @@ elif [ "$1" = "start" ] ; then
     fi
     $CATALINA_OUT_CMD <"$CATALINA_OUT" &
   fi
-  if [ "$1" = "-security" ] ; then
-    if [ $have_tty -eq 1 ]; then
-      echo "Using Security Manager"
-    fi
-    shift
-    eval $_NOHUP "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-      -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
-      -classpath "\"$CLASSPATH\"" \
-      -Djava.security.manager \
-      -Djava.security.policy=="\"$CATALINA_BASE/conf/catalina.policy\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
-      org.apache.catalina.startup.Bootstrap "$@" start \
-      >> "$CATALINA_OUT" 2>&1 "&"
 
-  else
-    eval $_NOHUP "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
-      -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
-      -classpath "\"$CLASSPATH\"" \
-      -Dcatalina.base="\"$CATALINA_BASE\"" \
-      -Dcatalina.home="\"$CATALINA_HOME\"" \
-      -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
-      org.apache.catalina.startup.Bootstrap "$@" start \
-      >> "$CATALINA_OUT" 2>&1 "&"
-
-  fi
+  eval $_NOHUP "\"$_RUNJAVA\"" "\"$CATALINA_LOGGING_CONFIG\"" $LOGGING_MANAGER "$JAVA_OPTS" "$CATALINA_OPTS" \
+    -classpath "\"$CLASSPATH\"" \
+    -Dcatalina.base="\"$CATALINA_BASE\"" \
+    -Dcatalina.home="\"$CATALINA_HOME\"" \
+    -Djava.io.tmpdir="\"$CATALINA_TMPDIR\"" \
+    org.apache.catalina.startup.Bootstrap "$@" start \
+    >> "$CATALINA_OUT" 2>&1 "&"
 
   if [ ! -z "$CATALINA_PID" ]; then
     echo $! > "$CATALINA_PID"
@@ -555,7 +464,6 @@ elif [ "$1" = "stop" ] ; then
   fi
 
   eval "\"$_RUNJAVA\"" $LOGGING_MANAGER "$JAVA_OPTS" \
-    -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
     -classpath "\"$CLASSPATH\"" \
     -Dcatalina.base="\"$CATALINA_BASE\"" \
     -Dcatalina.home="\"$CATALINA_HOME\"" \
@@ -642,7 +550,6 @@ elif [ "$1" = "stop" ] ; then
 elif [ "$1" = "configtest" ] ; then
 
     eval "\"$_RUNJAVA\"" $LOGGING_MANAGER "$JAVA_OPTS" \
-      -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
       -classpath "\"$CLASSPATH\"" \
       -Dcatalina.base="\"$CATALINA_BASE\"" \
       -Dcatalina.home="\"$CATALINA_HOME\"" \
@@ -656,9 +563,9 @@ elif [ "$1" = "configtest" ] ; then
 
 elif [ "$1" = "version" ] ; then
 
-    "$_RUNJAVA"   \
-      -classpath "$CATALINA_HOME/lib/catalina.jar" \
-      org.apache.catalina.util.ServerInfo
+   eval "\"$_RUNJAVA\"" "$JAVA_OPTS" \
+         -classpath "\"$CATALINA_HOME/lib/catalina.jar\"" \
+         org.apache.catalina.util.ServerInfo
 
 else
 
@@ -666,16 +573,12 @@ else
   echo "commands:"
   if $os400; then
     echo "  debug             Start Catalina in a debugger (not available on OS400)"
-    echo "  debug -security   Debug Catalina with a security manager (not available on OS400)"
   else
     echo "  debug             Start Catalina in a debugger"
-    echo "  debug -security   Debug Catalina with a security manager"
   fi
   echo "  jpda start        Start Catalina under JPDA debugger"
   echo "  run               Start Catalina in the current window"
-  echo "  run -security     Start in the current window with security manager"
   echo "  start             Start Catalina in a separate window"
-  echo "  start -security   Start in a separate window with security manager"
   echo "  stop              Stop Catalina, waiting up to 5 seconds for the process to end"
   echo "  stop n            Stop Catalina, waiting up to n seconds for the process to end"
   echo "  stop -force       Stop Catalina, wait up to 5 seconds and then use kill -KILL if still running"
