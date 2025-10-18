@@ -71,7 +71,7 @@
         <logback.version>1.5.19</logback.version>
         <logback-access.version>2.0.6</logback-access.version>
         <tomcat.version>11.0.13</tomcat.version>
-        <tomcat-config.version>11.0.12</tomcat-config.version>
+        <tomcat-config.version>11.0.13</tomcat-config.version>
         <tomcat-slf4j-logback.version>11.0.13</tomcat-slf4j-logback.version>
 
         <!-- Psi Probe Tomcat Manager -->
