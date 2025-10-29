@@ -69,7 +69,7 @@
         <commons-daemon.version>1.4.1</commons-daemon.version>
         <ecj.version>3.43.0</ecj.version>
         <logback.version>1.5.20</logback.version>
-        <logback-access.version>2.0.6</logback-access.version>
+        <logback-access.version>2.0.7</logback-access.version>
         <tomcat.version>11.0.13</tomcat.version>
         <tomcat-config.version>11.0.13</tomcat-config.version>
         <tomcat-slf4j-logback.version>11.0.13</tomcat-slf4j-logback.version>
