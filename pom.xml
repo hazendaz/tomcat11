@@ -70,7 +70,7 @@
         <ecj.version>3.44.0</ecj.version>
         <logback.version>1.5.21</logback.version>
         <logback-access.version>2.0.7</logback-access.version>
-        <tomcat.version>11.0.14</tomcat.version>
+        <tomcat.version>11.0.15</tomcat.version>
         <tomcat-config.version>11.0.14</tomcat-config.version>
         <tomcat-slf4j-logback.version>11.0.14</tomcat-slf4j-logback.version>
 
