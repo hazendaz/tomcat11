@@ -71,7 +71,7 @@
         <psi-probe.version>5.3.0</psi-probe.version>
 
         <!-- Convergence Versions -->
-        <commons-codec.version>1.19.0</commons-codec.version>
+        <commons-codec.version>1.22.0</commons-codec.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <woodstox.version>7.1.1</woodstox.version>
@@ -101,6 +101,17 @@
         <!-- Reproducible Builds -->
         <project.build.outputTimestamp>1711245736</project.build.outputTimestamp>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Convergence Management -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Tomcat Bin including slf4j/logback (bootstrap no longer in maven central) -->
@@ -238,7 +249,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
