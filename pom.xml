@@ -74,7 +74,7 @@
         <commons-codec.version>1.22.0</commons-codec.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
-        <woodstox.version>7.1.1</woodstox.version>
+        <woodstox.version>7.2.0</woodstox.version>
 
         <!-- Java EE Api Versions -->
         <angus-activation.version>2.0.3</angus-activation.version>
