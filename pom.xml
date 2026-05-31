@@ -61,7 +61,7 @@
         <!-- Standard Dependencies -->
         <commons-daemon.version>1.5.1</commons-daemon.version>
         <ecj.version>3.45.0</ecj.version>
-        <logback.version>1.5.32</logback.version>
+        <logback.version>1.5.33</logback.version>
         <logback-access.version>2.0.12</logback-access.version>
         <tomcat.version>11.0.22</tomcat.version>
         <tomcat-config.version>11.0.22</tomcat-config.version>
@@ -115,6 +115,11 @@
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
                 <version>${stax2-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
