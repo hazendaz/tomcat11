@@ -94,7 +94,7 @@
         <websocket.version>2.2.0</websocket.version>
 
         <!-- Metro (include in tomcat for java 8 or lower -->
-        <metro.version>4.0.6</metro.version>
+        <metro.version>4.0.7</metro.version>
 
         <!-- Automatic Module Name -->
         <module.name>com.github.hazendaz.tomcat</module.name>
