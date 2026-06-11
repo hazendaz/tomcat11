@@ -68,7 +68,7 @@
         <tomcat-slf4j-logback.version>11.0.22</tomcat-slf4j-logback.version>
 
         <!-- Psi Probe Tomcat Manager -->
-        <psi-probe.version>5.3.0</psi-probe.version>
+        <psi-probe.version>5.4.0</psi-probe.version>
 
         <!-- Convergence Versions -->
         <commons-codec.version>1.22.0</commons-codec.version>
