@@ -1,5 +1,9 @@
-Tomcat 11 Bundle
-================
+# Tomcat 11 Bundle
+
+[![Java CI](https://github.com/hazendaz/tomcat11/actions/workflows/ci.yaml/badge.svg)](https://github.com/hazendaz/tomcat11/actions/workflows/ci.yaml)
+[![License](https://img.shields.io/github/license/hazendaz/tomcat11)](https://www.apache.org/licenses/LICENSE-2.0)
+
+![hazendaz](src/site/resources/images/hazendaz-banner.jpg)
 
 This project takes tomcat 11.x.x zip and expands on it to provide the following.
 
