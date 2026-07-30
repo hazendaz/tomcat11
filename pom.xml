@@ -71,7 +71,7 @@
         <psi-probe.version>5.4.0</psi-probe.version>
 
         <!-- Convergence Versions -->
-        <commons-codec.version>1.22.0</commons-codec.version>
+        <commons-codec.version>1.22.1</commons-codec.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <stax2-api.version>4.3.0</stax2-api.version>
